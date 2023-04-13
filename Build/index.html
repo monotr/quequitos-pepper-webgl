@@ -3,13 +3,22 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity WebGL Player | Quequitos Papper</title>
+    <title>Quequitos Pepper</title>
+    <style>
+      .canvas-full-height {
+        height: 100vh !important;
+        width: auto !important;
+      }
+    </style>
   </head>
   <body style="text-align: center; padding: 0; border: 0; margin: 0;">
     <canvas id="unity-canvas" width=540 height=960 tabindex="-1" style="width: 540px; height: 960px; background: #F280C0"></canvas>
     <script src="Build/Build.loader.js"></script>
     <script>
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+      var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      var canvas = document.querySelector("#unity-canvas");
+
+      if (isMobile) {
         // Mobile device style: fill the whole browser client area with the game canvas:
         var meta = document.createElement('meta');
         meta.name = 'viewport';
@@ -22,6 +31,9 @@
         canvas.style.position = "fixed";
 
         document.body.style.textAlign = "left";
+      } else {
+        // PC browser style: adjust the canvas height to 100% of the screen height
+        canvas.classList.add("canvas-full-height");
       }
 
       createUnityInstance(document.querySelector("#unity-canvas"), {
