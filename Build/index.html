@@ -37,7 +37,7 @@
         canvas.classList.add("canvas-full-height");
       }
 
-      var unityInstance = createUnityInstance(document.querySelector("#unity-canvas"), {
+      /*var unityInstance = createUnityInstance(document.querySelector("#unity-canvas"), {
         dataUrl: "Build/Build.data",
         frameworkUrl: "Build/Build.framework.js",
         codeUrl: "Build/Build.wasm",
@@ -47,27 +47,78 @@
         productVersion: "0.1",
         // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
         // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
-      });
+      });*/
+      var canvas = document.querySelector("#unity-canvas");
+      var config = {
+        dataUrl: "Build/Build.data",
+        frameworkUrl: "Build/Build.framework.js",
+        codeUrl: "Build/Build.wasm",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "monotr's",
+        productName: "Quequitos Papper",
+        productVersion: "0.1",
+        // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
+        // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
+      };
+      var unityGame; // This variable can be used to access the application with .SendMessage() commands
+      var script = document.createElement("script");
+      var loaderUrl = "Build/Build.loader.js";
+      script.src = loaderUrl;
+      script.onload = function() {
+        createUnityInstance(canvas, config, function(progress) {
+          //loadingBar.style.width = 100 * progress + "%";
+        }).then(function(unityInstance) {
+          unityGame = unityInstance;
+          console.log("END!!!!" + unityGame);
+          //loadingContainer.classList.add("finished");
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+              var lat = position.coords.latitude;
+              var lng = position.coords.longitude;
+              enviarCoordenadasALaUnity(lat, lng);
+            });
+          } else {
+            console.log("Geolocalización no soportada por este navegador.");
+          }
+        }).catch(function(message) {
+          alert(message);
+        });
+      };
+      document.body.appendChild(script);
 
       function enviarCoordenadasALaUnity(lat, lng) {
-        var unityInstance = UnityLoader.getInstance();
-        if (typeof unityInstance !== "undefined") {
+        if (typeof unityGame !== "undefined") {
           console.log("Sending to unity " + lat + " , " + lng);
-          unityInstance.SendMessage("ControladorDeJuego", "RecibirCoordenadas", lat + "," + lng);
+          unityGame.SendMessage("GeoScript", "RecibirCoordenadas", lat + "," + lng);
         } else {
           console.log("Unity no está definido.");
         }
       }
 
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-          var lat = position.coords.latitude;
-          var lng = position.coords.longitude;
-          enviarCoordenadasALaUnity(lat, lng);
-        });
-      } else {
-        console.log("Geolocalización no soportada por este navegador.");
+      function openImagePicker() {
+        if (typeof unityGame !== "undefined") {
+          console.log("Sending to unity base64 image");
+          
+          var input = document.createElement('input');
+          input.type = 'file';
+          input.accept = 'image/*';
+
+          input.onchange = function (event) {
+              var reader = new FileReader();
+              reader.onload = function () {
+                  var base64Image = reader.result;
+                  unityGame.SendMessage('BrowserCaller', 'ReceiveImage', base64Image);
+              };
+              reader.readAsDataURL(event.target.files[0]);
+          };
+
+          input.click();
+        } else {
+          console.log("Unity no está definido.");
+        }
       }
+
+      
     </script>
   </body>
 </html>
