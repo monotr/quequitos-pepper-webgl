@@ -50,8 +50,9 @@
       });
 
       function enviarCoordenadasALaUnity(lat, lng) {
+        var unityInstance = UnityLoader.getInstance();
         if (typeof unityInstance !== "undefined") {
-          console.log("Sinding to unity " + lat + " , " + lng);
+          console.log("Sending to unity " + lat + " , " + lng);
           unityInstance.SendMessage("ControladorDeJuego", "RecibirCoordenadas", lat + "," + lng);
         } else {
           console.log("Unity no está definido.");
