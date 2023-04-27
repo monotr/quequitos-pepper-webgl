@@ -37,7 +37,7 @@
         canvas.classList.add("canvas-full-height");
       }
 
-      createUnityInstance(document.querySelector("#unity-canvas"), {
+      var unityInstance = createUnityInstance(document.querySelector("#unity-canvas"), {
         dataUrl: "Build/Build.data",
         frameworkUrl: "Build/Build.framework.js",
         codeUrl: "Build/Build.wasm",
@@ -48,6 +48,25 @@
         // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
         // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
       });
+
+      function enviarCoordenadasALaUnity(lat, lng) {
+        if (typeof unityInstance !== "undefined") {
+          console.log("Sinding to unity " + lat + " , " + lng);
+          unityInstance.SendMessage("ControladorDeJuego", "RecibirCoordenadas", lat + "," + lng);
+        } else {
+          console.log("Unity no está definido.");
+        }
+      }
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          var lat = position.coords.latitude;
+          var lng = position.coords.longitude;
+          enviarCoordenadasALaUnity(lat, lng);
+        });
+      } else {
+        console.log("Geolocalización no soportada por este navegador.");
+      }
     </script>
   </body>
 </html>
