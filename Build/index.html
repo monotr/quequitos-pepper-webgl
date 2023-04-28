@@ -75,7 +75,7 @@
           unityGame = unityInstance;
           console.log("END!!!!" + unityGame);
           //loadingContainer.classList.add("finished");
-          //document.getElementById("loading-container").style.display = "none";
+          document.getElementById("loading-container").style.display = "none";
 
           /*if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
@@ -140,12 +140,15 @@
         "Elaborando la cobertura...",
         "Preparando la manga pastelera..."
       ];
-    
-      // Selecciona un mensaje aleatorio del array
-      var randomMessage = loadingMessages[Math.floor(Math.random() * loadingMessages.length)];
-    
-      // Actualiza el contenido del elemento de texto
-      document.getElementById("loading-text").innerHTML = randomMessage;
+      // Función para actualizar el mensaje de carga aleatoriamente
+      function updateRandomMessage() {
+        var randomMessage = loadingMessages[Math.floor(Math.random() * loadingMessages.length)];
+        document.getElementById("loading-text").innerHTML = randomMessage;
+      }
+      // Actualiza el mensaje de carga inmediatamente al cargar la página
+      updateRandomMessage();
+      // Actualiza el mensaje de carga aleatoriamente cada 5 segundos
+      setInterval(updateRandomMessage, 5000);
     </script>
   </body>
 </html>
