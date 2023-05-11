@@ -121,6 +121,14 @@
         }
       }
 
+      function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(function() {
+            console.log('Copied to clipboard successfully!');
+        }, function() {
+            console.error('Unable to write to clipboard. :-(');
+        });
+      }
+
       function openImagePicker() {
         if (typeof unityGame !== "undefined") {
           console.log("Sending to unity base64 image");
